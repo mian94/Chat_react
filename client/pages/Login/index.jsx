@@ -1,5 +1,6 @@
+import { useState } from 'react';
+
 function Login() {
-    const { useState } = React;//从React中解构useState
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
 
@@ -40,33 +41,5 @@ function Login() {
     )
 }
 
-const root1 = ReactDOM.createRoot(document.getElementById("root1"));
-root1.render(
-    <Login />
-)
+export default Login;
 
-function Chat() {
-    const {useState} = React;
-    const [input,setInput] = useState('');
-
-    const handleChat = () =>{
-        if(!input.trim()) return;
-        const response = fetch('http://localhost:3000/api/message',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({input})
-        })
-        .then(alert(response.json))
-        .catch(error => alert('发送失败'));
-    }
-    return (
-        <div>
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
-            <button onClick={handleChat}>发送</button>
-        </div>
-    )
-}
-const root2 = ReactDOM.createRoot(document.getElementById("root2"));
-root2.render(
-    <Chat />
-)
