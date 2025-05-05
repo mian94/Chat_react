@@ -24,14 +24,17 @@ function Chat() {
         const res = await fetch('http://localhost:3000/api/messages');
         const data = await res.json();
         const filtered = data.filter(msg => typeof msg === 'string' && msg.trim() !== '');
-        setMessages(filtered);
+        if (filtered.length > messages.length) {
+          const newMessage = filtered.slice(messages.length); // 获取新增的消息
+          setMessages(prevMessages => [...prevMessages, ...newMessage]); // 更新消息列表
+        }
       } catch (error) {
         console.error('获取消息失败', error);
       }
     }, 2000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [messages]);
 
   return (
       <div>
@@ -40,7 +43,7 @@ function Chat() {
           <div id='chat'>
             <h3>聊天记录</h3>
            {
-            messages === 0 ?(
+            messages.length === 0 ?(
               <p>暂无消息</p>
             ):(
               <ul>
