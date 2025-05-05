@@ -23,7 +23,7 @@ function Chat() {
       try {
         const res = await fetch('http://localhost:3000/api/messages');
         const data = await res.json();
-        const filtered = data.filter(msg => msg.trim && msg.trim());
+        const filtered = data.filter(msg => typeof msg === 'string' && msg.trim() !== '');
         setMessages(filtered);
       } catch (error) {
         console.error('获取消息失败', error);
@@ -37,7 +37,22 @@ function Chat() {
       <div>
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
           <button onClick={handleChat}>发送</button>
-          
+          <div id='chat'>
+            <h3>聊天记录</h3>
+           {
+            messages === 0 ?(
+              <p>暂无消息</p>
+            ):(
+              <ul>
+                {
+                  messages.map((msg,index) => (
+                    <li key={index} dangerouslySetInnerHTML={{__html:msg}}></li>
+                  ))
+                }
+              </ul>
+            )
+           }
+          </div>
       </div>
   )
 }
