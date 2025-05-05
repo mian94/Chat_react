@@ -6,11 +6,14 @@ const cors = require('cors');
 const app = express();
 
 //定义用户数据路径
-const usersFile = path.join(__dirname,'userinfo.json');//拼接路径
+const usersFile = path.join(__dirname,'userinfo.json'); //拼接路径
 const chatFile = path.join(__dirname,'record.json');
 
 if(!fs.existsSync(usersFile)){
     fs.writeFileSync(usersFile,'[]');
+}
+if(!fs.existsSync(chatFile)){
+    fs.writeFileSync(chatFile,'[]');
 }
 
 app.use(express.json());
@@ -47,16 +50,34 @@ app.post('/api/login',(req,res) => {
     });
 });
 
-app.post('/api/message',(req,res) =>{
-    const message = req.body;
-    const messages = JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
-    if(!message) return res.status(400).json('消息不能为空');
-    messages.push({message});
-    fs.writeFileSync(chatFile,JSON.stringify(message));
-    res.status(201).json('发送成功');
-})
+app.post('/api/message', async (req, res) => {
+    const { input } = req.body;
+  
+    if (!input || !input.trim()) {
+      return res.status(400).json("消息不能为空");
+    }
+  
+    try {
+      const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
+      messages.push(input);
+      await fs.writeFileSync(chatFile, JSON.stringify(messages));
+      res.status(201).json("发送成功");
+    } catch (error) {
+      res.status(500).json("内部服务器错误，请稍后再试");
+    }
+  });
 
-
+  app.get('/api/messages', async (req, res) => {
+    try {
+      const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
+      res.json(messages);
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        return res.json([]);
+      }
+      res.status(500).send('读取文件失败');
+    }
+  });
 
 app.listen(3000,() => {
     console.log('服务器运行在3000');
