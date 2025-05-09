@@ -4,7 +4,7 @@ import Login from './pages/Login';
 import Chat from './pages/Chat';
 import './App.css';
 
-// 导航栏按钮组件（可选）
+// 导航栏按钮组件
 function NavButtons() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
