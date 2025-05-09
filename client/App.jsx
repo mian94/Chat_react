@@ -22,7 +22,7 @@ function AppContent() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
-        /* 默认重定向到登录页 */
+        {/* 默认重定向到登录页 */}
         <Route path="*" element={<Login />} />
       </Routes>
     </div>
