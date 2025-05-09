@@ -49,7 +49,7 @@ function Chat() {
               <ul>
                 {
                   messages.map((msg,index) => (
-                    <li key={index} dangerouslySetInnerHTML={{__html:msg}}></li>
+                    <li key={index}>{msg}</li>
                   ))
                 }
               </ul>
