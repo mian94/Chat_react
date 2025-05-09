@@ -4,7 +4,7 @@ import Login from './pages/Login';
 import Chat from './pages/Chat';
 import './App.css';
 
-// 导航栏按钮组件（可选）
+// 导航栏按钮组件
 function NavButtons() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
@@ -22,7 +22,7 @@ function AppContent() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
-        {/* 默认重定向到登录页 */}
+        /* 默认重定向到登录页 */
         <Route path="*" element={<Login />} />
       </Routes>
     </div>
