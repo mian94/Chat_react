@@ -19,11 +19,11 @@ if(!fs.existsSync(chatFile)){
 app.use(express.json());
 app.use(cors());//启用cors
 
-app.post('/api/register',(req,res) =>{
+app.post('/api/register',(req: { body: { username: any; password: any; }; },res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) =>{
     const {username,password} = req.body;
     //从文件中读取 JSON 数据并将其解析为JavaScript对象
     const users = JSON.parse(fs.readFileSync(usersFile,'utf-8') || '[]');
-    if(users.some(u => u.username ===username)) {
+    if(users.some((u: { username: any; }) => u.username ===username)) {
         return res.status(400).json("用户名已存在");
     }
     else if(username===''||password===''){
@@ -34,14 +34,14 @@ app.post('/api/register',(req,res) =>{
     res.status(201).json("注册成功");
 });
 
-app.post('/api/login',(req,res) => {
+app.post('/api/login',(req: { body: { username: any; password: any; }; },res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
     const {username,password} = req.body;
     const readStream = fs.createReadStream(usersFile);
     let data ='';
-    readStream.on('data',chunk => data+=chunk);
+    readStream.on('data',(chunk: string) => data+=chunk);
     readStream.on('end',() =>{
         const users = JSON.parse(data ||'[]');
-        const user = users.find(u => u.username === username&&u.password === password);
+        const user = users.find((u: { username: any; password: any; }) => u.username === username&&u.password === password);
         if(user){
             res.status(201).json("登录成功");
         }else{
@@ -50,7 +50,7 @@ app.post('/api/login',(req,res) => {
     });
 });
 
-app.post('/api/message', async (req, res) => {
+app.post('/api/message', async (req: { body: { input: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
     const { input } = req.body;
   
     if (!input || !input.trim()) {
@@ -67,14 +67,11 @@ app.post('/api/message', async (req, res) => {
     }
   });
 
-  app.get('/api/messages', async (req, res) => {
+  app.get('/api/messages', async (req: any, res: { json: (arg0: never[]) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
     try {
       const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
       res.json(messages);
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        return res.json([]);
-      }
+    } catch (error) {
       res.status(500).send('读取文件失败');
     }
   });
