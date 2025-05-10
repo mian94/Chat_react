@@ -4,7 +4,10 @@ import Login from './pages/Login';
 import Chat from './pages/Chat';
 import './App.css';
 
+<<<<<<< HEAD:client/App.tsx
 
+=======
+>>>>>>> bf16950e67cbf22192cfeab1d083ab4587732d87:client/App.jsx
 // 导航栏按钮组件
 function NavButtons() {
   return (
