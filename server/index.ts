@@ -34,18 +34,24 @@ app.post('/api/register',(req: { body: { username: any; password: any; }; },res:
     res.status(201).json("注册成功");
 });
 
-app.post('/api/login',(req: { body: { username: any; password: any; }; },res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
-    const {username,password} = req.body;
+app.post('/api/login', (req: { body: { username: any; password: any } }, res: { status: (arg0: number) => { json: (arg0: { state: string, safeUsers?: Array<{ username: string }> }) => void } }) => {
+    const { username, password } = req.body;
     const readStream = fs.createReadStream(usersFile);
-    let data ='';
-    readStream.on('data',(chunk: string) => data+=chunk);
-    readStream.on('end',() =>{
-        const users = JSON.parse(data ||'[]');
-        const user = users.find((u: { username: any; password: any; }) => u.username === username&&u.password === password);
-        if(user){
-            res.status(201).json("登录成功");
-        }else{
-            res.status(400).json("用户名或密码错误");
+    let data = '';
+    readStream.on('data', (chunk: string) => data += chunk);
+    readStream.on('end', () => {
+        const users = JSON.parse(data || '[]');
+        const user = users.find((u: { username: any; password: any }) => u.username === username && u.password === password);
+        if (user) {
+            const safeUsers = users.filter((u: { username: any; }) =>u.username !== username).map((u: { username: any; }) => ({
+                username: u.username,
+            }));
+            res.status(200).json({
+                state: "登录成功",
+                safeUsers
+            });
+        } else {
+            res.status(400).json({ state: "用户名或密码错误" });
         }
     });
 });
