@@ -16,3 +16,14 @@ ul{
   border-radius: 4px;
   font-size: 16px;
 }
+#chat{
+  display: flex;
+}
+#friends{
+  flex:2;
+  background-color: rgb(80, 150, 255);
+}
+#chatrecord{
+  flex:8;
+  background-color: rgb(141, 100, 237);
+}
