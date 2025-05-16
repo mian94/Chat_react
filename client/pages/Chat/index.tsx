@@ -1,13 +1,12 @@
 import React from 'react';
 import { useState,useEffect } from 'react';
+import { useSafeUsers } from '../Login';
 
-interface ApiResponse {
-  messages?: string[];
-}
 
 function Chat() {
   const [input,setInput] = useState<string>('');
   const [messages,setMessages] = useState<string[]>([]);
+  const { safeUsers, setSafeUsers } = useSafeUsers();
 
   const handleChat = async () =>{
       try{
@@ -48,20 +47,30 @@ function Chat() {
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
           <button onClick={handleChat}>发送</button>
           <div id='chat'>
-            <h3>聊天记录</h3>
-           {
-            messages.length === 0 ?(
-              <p>暂无消息</p>
-            ):(
+            <div id='friends'>
+              <h3>联系人</h3>
               <ul>
-                {
-                  messages.map((msg,index) => (
-                    <li key={index}>{msg}</li>
-                  ))
-                }
+                {safeUsers.map((user, index) => (
+                  <li key={index}>{user.username}</li>
+                ))}
               </ul>
-            )
-           }
+            </div>
+            <div id='chatrecord'>
+              <h3>聊天记录</h3>
+            {
+              messages.length === 0 ?(
+                <p>暂无消息</p>
+              ):(
+                <ul>
+                  {
+                    messages.map((msg,index) => (
+                      <li key={index}>{msg}</li>
+                    ))
+                  }
+                </ul>
+              )
+            }
+            </div>
           </div>
       </div>
   )
