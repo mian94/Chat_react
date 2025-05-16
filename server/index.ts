@@ -9,11 +9,14 @@ const app = express();
 const usersFile = path.join(__dirname,'userinfo.json'); //拼接路径
 const chatFile = path.join(__dirname,'record.json');
 
+type chattuple = [string,...string[]];
+
 if(!fs.existsSync(usersFile)){
     fs.writeFileSync(usersFile,'[]');
 }
 if(!fs.existsSync(chatFile)){
-    fs.writeFileSync(chatFile,'[]');
+  const initchat: chattuple[] = [];
+  fs.writeFileSync(chatFile,JSON.stringify(initchat));
 }
 
 app.use(express.json());
@@ -48,7 +51,7 @@ app.post('/api/login', (req: { body: { username: any; password: any } }, res: { 
             }));
             res.status(200).json({
                 state: "登录成功",
-                safeUsers
+                safeUsers,
             });
         } else {
             res.status(400).json({ state: "用户名或密码错误" });
@@ -56,31 +59,31 @@ app.post('/api/login', (req: { body: { username: any; password: any } }, res: { 
     });
 });
 
-app.post('/api/message', async (req: { body: { input: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
-    const { input } = req.body;
-  
-    if (!input || !input.trim()) {
-      return res.status(400).json("消息不能为空");
-    }
-  
+app.post('/api/message', async (req: { body: { username: string; message: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
+    const { username,message } = req.body;
     try {
       const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
-      messages.push(input);
+      const chatRecord = messages.find((msg: chattuple) => msg[0] === username);
+      if (chatRecord) {
+        chatRecord.push(message);
+      } else {
+        messages.push([username, message]); // 创建新的记录
+      }
       await fs.writeFileSync(chatFile, JSON.stringify(messages));
       res.status(201).json("发送成功");
     } catch (error) {
       res.status(500).json("内部服务器错误，请稍后再试");
     }
-  });
+});
 
-  app.get('/api/messages', async (req: any, res: { json: (arg0: never[]) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+app.get('/api/messages', async (req: any, res: { json: (arg0: never[]) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
     try {
       const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
       res.json(messages);
     } catch (error) {
       res.status(500).send('读取文件失败');
     }
-  });
+});
 
 app.listen(3000,() => {
     console.log('服务器运行在3000');
