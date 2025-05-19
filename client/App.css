@@ -21,9 +21,20 @@ ul{
 }
 #friends{
   flex:2;
-  background-color: rgb(80, 150, 255);
+  border-style: solid;
+  border-width: 3px;
+  border-color: cornflowerblue;
 }
 #chatrecord{
   flex:8;
-  background-color: rgb(141, 100, 237);
+  border-style: solid;
+  border-width: 3px;
+  border-color: cornflowerblue;
+}
+#friends{
+  background-color:white;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(126, 163, 231);
+  
 }

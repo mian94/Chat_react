@@ -66,6 +66,39 @@ export const useUser = (): UserContextType => {
     return context;
 };
 
+type Friend = {
+  friendname: string;
+};
+
+type FriendContextType = {
+  friend: Friend | null;
+  setFriend: React.Dispatch<React.SetStateAction<Friend | null>>;
+};
+
+const initialFriendContext: FriendContextType = {
+  friend: null,
+  setFriend: () => {},
+};
+
+export const FriendContext = createContext<FriendContextType | undefined>(undefined);
+
+export const FriendProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [friend, setFriend] = useState<Friend | null>(null);
+
+  return (
+    <FriendContext.Provider value={{ friend, setFriend }}>
+      {children}
+    </FriendContext.Provider>
+  );
+};
+
+export const useFriend = (): FriendContextType => {
+    const context = useContext(FriendContext);
+    if (!context) {
+    throw new Error('useContext 必须在 UserProvider 内部使用');
+    }
+    return context;
+};
 
 function Login() {
     const [username,setUsername] = useState('');
@@ -104,7 +137,6 @@ function Login() {
         setUser({ username });
         // 跳转到聊天页面
         navigate('/chat');
-        console.log(result);
       } else {
         alert(result);
       }

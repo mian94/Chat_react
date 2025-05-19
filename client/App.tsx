@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react
 import Login from './pages/Login';
 import Chat from './pages/Chat';
 import './App.css';
-import { SafeUsersProvider, UserProvider } from './pages/Login';
+import { SafeUsersProvider, UserProvider, FriendProvider } from './pages/Login';
 
 // 导航栏按钮组件
 function NavButtons() {
@@ -22,15 +22,16 @@ function AppContent() {
       <NavButtons />
       <SafeUsersProvider>
         <UserProvider>
-          <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/chat" element={<Chat />} />
-          {/* 默认重定向到登录页 */}
-          <Route path="*" element={<Login />} />
-        </Routes>
+          <FriendProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/chat" element={<Chat />} />
+              {/* 默认重定向到登录页 */}
+              <Route path="*" element={<Login />} />
+            </Routes>
+          </FriendProvider>
         </UserProvider>
       </SafeUsersProvider>
-      
     </div>
   );
 }
