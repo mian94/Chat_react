@@ -9,14 +9,17 @@ const app = express();
 const usersFile = path.join(__dirname,'userinfo.json'); //拼接路径
 const chatFile = path.join(__dirname,'record.json');
 
-type chattuple = [string,...string[]];
+interface chatrecord {
+  username: string
+  friendname:string
+  message:string[]
+}
 
 if(!fs.existsSync(usersFile)){
     fs.writeFileSync(usersFile,'[]');
 }
 if(!fs.existsSync(chatFile)){
-  const initchat: chattuple[] = [];
-  fs.writeFileSync(chatFile,JSON.stringify(initchat));
+  fs.writeFileSync(chatFile,'[]');
 }
 
 app.use(express.json());
@@ -59,17 +62,28 @@ app.post('/api/login', (req: { body: { username: any; password: any } }, res: { 
     });
 });
 
-app.post('/api/message', async (req: { body: { username: string; message: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
-    const { username,message } = req.body;
+app.post('/api/message', async (req: { body: { username: string; friendname: string ; message: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: string): void; new(): any; }; }; }) => {
+    const { username,friendname,message } = req.body;
     try {
-      const messages = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
-      const chatRecord = messages.find((msg: chattuple) => msg[0] === username);
-      if (chatRecord) {
-        chatRecord.push(message);
-      } else {
-        messages.push([username, message]); // 创建新的记录
+      const messages:chatrecord[] = await JSON.parse(fs.readFileSync(chatFile,'utf-8')||'[]');
+      let i=0;
+      for(i=0;i<messages.length;i++){
+        if(messages[i].username===username&&messages[i].friendname===friendname){
+          messages[i].message.push(message);
+          break;
+        }
       }
-      await fs.writeFileSync(chatFile, JSON.stringify(messages));
+      if(i===messages.length){
+        const newmessage:string[]=[];
+        newmessage.push(message);
+        const newrecord:chatrecord = {
+          username: username,
+          friendname:friendname,
+          message:newmessage
+        }
+        messages.push(newrecord);
+      }
+      fs.writeFileSync(chatFile,JSON.stringify(messages));
       res.status(201).json("发送成功");
     } catch (error) {
       res.status(500).json("内部服务器错误，请稍后再试");
